@@ -1,6 +1,6 @@
 #!/usr/bin/python
 from __future__ import absolute_import, division, print_function
-# Copyright 2019-2024 Fortinet, Inc.
+# Copyright 2019-2026 Fortinet, Inc.
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 __metaclass__ = type
@@ -11,30 +11,16 @@ ANSIBLE_METADATA = {'status': ['preview'],
 
 DOCUMENTATION = '''
 ---
-module: fmgr_dvmdb_script
-short_description: Script table.
+module: fmgr_pm_config_fmr_script
+short_description: Manage Device Script Objects
 description:
-    - This module is able to configure a FortiManager device.
+    - This module is able to manage a Device script on FortiManager.
     - Examples include all parameters and values which need to be adjusted to data sources before usage.
 version_added: "1.0.0"
 author:
-    - Xinwei Du (@dux-fortinet)
-    - Xing Li (@lix-fortinet)
-    - Jie Xue (@JieX19)
-    - Link Zheng (@chillancezen)
-    - Frank Shen (@fshen01)
-    - Hongbin Lu (@fgtdev-hblu)
+    - Rene Sobral(@renesobral)
 notes:
-    - Starting in version 2.4.0, all input arguments are named using the underscore naming convention (snake_case).
-      Please change the arguments such as "var-name" to "var_name".
-      Old argument names are still available yet you will receive deprecation warnings.
-      You can ignore this warning by setting deprecation_warnings=False in ansible.cfg.
-    - Running in workspace locking mode is supported in this FortiManager module, the top
-      level parameters workspace_locking_adom and workspace_locking_timeout help do the work.
-    - To create or update an object, use state present directive.
-    - To delete an object, use state absent directive.
-    - Normally, running one module can fail when a non-zero rc is returned. you can also override
-      the conditions to fail or succeed with parameters rc_failed and rc_succeeded
+    - This feature is a new API starting from FortiManager 7.6.5, please make sure your device is running this version or later.
 options:
     access_token:
         description: The token to access FortiManager without using username and password.
@@ -83,14 +69,14 @@ options:
         description: The parameter (adom) in requested url.
         type: str
         required: true
-    dvmdb_script:
+    pm_config_fmr_script:
         description: The top level parameters set.
-        required: false
+        required: true
         type: dict
         suboptions:
             content:
                 type: str
-                description: The full content of the script result log.
+                description: The full content of the device script result log.
             desc:
                 type: str
                 description: Desc.
@@ -209,10 +195,10 @@ EXAMPLES = '''
     device_vdom: "root"
   tasks:
     - name: Create a Script to later execute
-      fortinet.fortimanager.fmgr_dvmdb_script:
+      fortinet.fortimanager.fmgr_pm_config_fmr_script:
         adom: "{{ device_adom }}"
         state: "present"
-        dvmdb_script:
+        pm_config_fmr_script:
           name: "{{ script_name }}"
           desc: "A script created via Ansible"
           content: |
@@ -252,11 +238,11 @@ EXAMPLES = '''
     ansible_httpapi_port: 443
   tasks:
     - name: Script table.
-      fortinet.fortimanager.fmgr_dvmdb_script:
+      fortinet.fortimanager.fmgr_pm_config_fmr_script:
         bypass_validation: false
         adom: ansible
         state: present
-        dvmdb_script:
+        pm_config_fmr_script:
           content: "ansible-test"
           name: "ansible-test"
           target: device_database
@@ -295,12 +281,12 @@ EXAMPLES = '''
           workspace_mode: normal
 
     - name: Script table.
-      fortinet.fortimanager.fmgr_dvmdb_script:
+      fortinet.fortimanager.fmgr_pm_config_fmr_script:
         bypass_validation: false
         adom: root
         state: present
         workspace_locking_adom: "root"
-        dvmdb_script:
+        pm_config_fmr_script:
           content: "ansible-test"
           name: "fooscript000"
           target: device_database
@@ -370,17 +356,16 @@ from ansible_collections.fortinet.fortimanager.plugins.module_utils.common impor
 
 def main():
     urls_list = [
-        '/dvmdb/adom/{adom}/script',
-        '/dvmdb/global/script',
-        '/dvmdb/script'
+        '/pm/config/adom/{adom}/obj/fmg/script',
+        '/pm/config/global/obj/fmg/script'
     ]
     url_params = ['adom']
     module_primary_key = 'name'
     module_arg_spec = {
         'adom': {'required': True, 'type': 'str'},
-        'dvmdb_script': {
+        'pm_config_fmr_script': {
             'type': 'dict',
-            'v_range': [['6.0.0', '7.6.4']],
+            'v_range': [['7.6.5', '']],
             'options': {
                 'content': {'type': 'str'},
                 'desc': {'type': 'str'},
@@ -414,8 +399,9 @@ def main():
     module_option_spec = get_module_arg_spec('full crud')
     module_arg_spec.update(module_option_spec)
     params_validation_blob = []
+        
     check_galaxy_version(module_arg_spec)
-    module = AnsibleModule(argument_spec=check_parameter_bypass(module_arg_spec, 'dvmdb_script'),
+    module = AnsibleModule(argument_spec=check_parameter_bypass(module_arg_spec, 'pm_config_fmr_script'),
                            supports_check_mode=True)
 
     if not module._socket_path:
